@@ -21,14 +21,13 @@ namespace ConsoleApp1
 {
     internal class Program
     {
-        List<Tuple<int, int>> employeeNumberMinMaxList;
         string connectionString;
         SqlConnection cn;
         StreamWriter writetext;
         IWebDriver webDriver;
         WebDriverWait wait;
         int minMaxListCounter = 48;
-    
+
         public Program()
         {
             try {
@@ -37,62 +36,67 @@ namespace ConsoleApp1
                 webDriver = new ChromeDriver();
                 cn = new SqlConnection(connectionString);
                 wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(20));
-                employeeNumberMinMaxList = new List<Tuple<int, int>>();
-                // This list can be editted spesifically for the country
-                // From high to lower should be better
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(50, 50000));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(45, 50));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(40, 45));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(35, 40));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(30, 35));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(25, 30));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(21, 25));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(19, 23));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(16, 19));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(14, 16));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(12, 14));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(11, 12));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(10, 11));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(9, 10));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(8, 8));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(7, 7));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(6, 6));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(5, 5));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(4, 4));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(3, 3));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(2, 2));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(1, 1));
-                employeeNumberMinMaxList.Add(new Tuple<int, int>(0, 0));
             }
-            catch (Exception ex) { log(ex, " constructor"); }
+            catch(Exception ex) { log(ex, " constructor"); }
             }
 
         static void Main(string[] args )
         {
-            Program app = new Program();
-            //string[] argsComing = Environment.GetCommandLineArgs();
-
-            if (args[0] == app.employeeNumberMinMaxList.Count.ToString())
+            if (args[0] == "-1")
             {
                 Environment.Exit(0);
             }
+
+            /*800 000 data should be divided into 80 to make it 10 000 by 10 000. 
+             So list is not very necessary, filtering only by employee number may not be sufficent
+            List<Tuple<int,int>> minMaxList = new List<Tuple<int, int>>(); 
+            // This must be filled spesifically for the country
+            // From high to lower should be better
+            minMaxList.Add(new Tuple<int, int>(50, 50000));
+            minMaxList.Add(new Tuple<int, int>(45, 50));
+            minMaxList.Add(new Tuple<int, int>(40, 45));
+            minMaxList.Add(new Tuple<int, int>(35, 40));
+            minMaxList.Add(new Tuple<int, int>(30, 35));
+            minMaxList.Add(new Tuple<int, int>(25, 30));
+            minMaxList.Add(new Tuple<int, int>(21, 25));
+            minMaxList.Add(new Tuple<int, int>(19, 23));
+            minMaxList.Add(new Tuple<int, int>(16, 19));
+            minMaxList.Add(new Tuple<int, int>(14, 16));
+            minMaxList.Add(new Tuple<int, int>(12, 14));
+            minMaxList.Add(new Tuple<int, int>(11, 12));
+            minMaxList.Add(new Tuple<int, int>(10, 11));
+            minMaxList.Add(new Tuple<int, int>(9, 10));
+            minMaxList.Add(new Tuple<int, int>(8, 8));
+            minMaxList.Add(new Tuple<int, int>(7, 7));
+            minMaxList.Add(new Tuple<int, int>(6, 6));
+            minMaxList.Add(new Tuple<int, int>(5, 5));
+            minMaxList.Add(new Tuple<int, int>(4, 4));
+            minMaxList.Add(new Tuple<int, int>(3, 3));
+            minMaxList.Add(new Tuple<int, int>(2, 2));
+            minMaxList.Add(new Tuple<int, int>(1, 1));
+            minMaxList.Add(new Tuple<int, int>(0, 0));
+            */
+            Program app = new Program();
+            //string[] argsComing = Environment.GetCommandLineArgs();
 
             app.webDriver.Navigate().GoToUrl("https://platform.globaldatabase.com/");
             app.webDriver.Manage().Window.Size = new System.Drawing.Size(1950, 1050);
             app.login();
        
             app.findCountry(app.webDriver, "Sweden");
-
-            //using region as filtering is not good idea because around 300k companies are not filtered in any region
-            //int numberOfRegions = app.selectRegion(args[2]);  
-
-            bool wasDateIntervalChanged = app.calculateAndSetCorporationDate(args[1] , args[2]).wasDateIntervalAltered;
-
+        
+            int numberOfRegions = app.selectRegion(args[2]);
+  
             app.setNumberOfEmployeeInterval(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
+           
+            app.wait.Until(ExpectedConditions.ElementExists(By.CssSelector("tbody[class='rc-table-tbody']")));
+            IWebElement DataTable = app.webDriver.FindElement(By.CssSelector("tbody[class='rc-table-tbody']"));
 
             app.wait.Until(ExpectedConditions.ElementExists(By.CssSelector("tr[class='rc-table-row rc-table-row-level-0']")));
 
             Thread.Sleep(4000);
+            //List<List<object>> ScrapedData = new();
+            //foreach (var row in DataTable.FindElements(By.CssSelector("tr[class='rc-table-row rc-table-row-level-0']"))) 
             int i = 1; 
             IWebElement row = app.webDriver.FindElement(By.XPath("//*[@id=\"scrollable-table\"]/div[2]/div[2]/table/tbody/tr[" + i + "]"));
 
@@ -112,18 +116,17 @@ namespace ConsoleApp1
                     //It may be good idea to wait less than a minute for data to be loaded, if not, then change filter
                     //for the filter, my first idea was to go region by region 
                     //Better (easier) idea should be to go by entering sequential number of employees intervals to filter boxes
-                    //However when filter needs to be changed, restarting the process WITH NEW FILTERS would be wise idea for releasing unnecessary ram usage.
+                    //However when filter needs to be changed, restarting the process WITH NEW FILTERS would be wise idea for released unnecessary ram usage.
                     //Or we need to find another way to free the ram
                     string arguments = "";
-                    
-                    if (wasDateIntervalChanged)
+                    if (args[2] == numberOfRegions.ToString())
                     {
-                        CorporationDateModel dateModel = app.calculateAndSetCorporationDate(args[1], args[2]);
-                        arguments = Convert.ToInt32(args[0]).ToString() + " " + dateModel.newStartDate + " " + dateModel.newEndDate;
+                        arguments = (Convert.ToInt32(args[0]) - 1).ToString();
+                        arguments = arguments + " " + arguments + " " + "1" ;
                     }
                     else
                     {
-                        arguments = (Convert.ToInt32(args[0]) + 1).ToString() + " 1500-01-01 2024-01-01";
+                        arguments = args[0] + " " + args[0] + " " + (Convert.ToInt32(args[2]) + 1).ToString(); ;
                     }
                     app.writetext.Close();
                     // Restart current application, with different filters
@@ -167,6 +170,7 @@ namespace ConsoleApp1
                 try 
                 {
                     app.wait.Until(ExpectedConditions.ElementExists(By.TagName("td")));
+                    // maybe some condition to ensure that mail and phone appears
                     foreach (var cell in row.FindElements(By.TagName("td")))
                     {
                         try
@@ -184,8 +188,45 @@ namespace ConsoleApp1
                     app.webDriver.ExecuteJavaScript("arguments[0].scrollIntoView();", row);
                 }
                 catch(Exception ex) { app.log(ex , " scroll down");}
+    
+                string query = "INSERT INTO CompanyInfoAll VALUES (@CompanyName, @CompanyEmail, @Phone, @Website, @SICCode, @VatNumber, @SICDescription, @Industry, @LegalForm, @RegistrationNo, @Address, @AlexaRank, @MonthlyVisits, @EmployeeNumber, @TurnOver, @Age)";
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, app.cn))
+                    {
+                        cmd.Parameters.Add("@CompanyName", SqlDbType.NVarChar, 100).Value = string.IsNullOrEmpty(companyData[1]) ? "0" : companyData[1];
+                        cmd.Parameters.Add("@CompanyEmail", SqlDbType.NVarChar, 100).Value = companyData[2];
+                        cmd.Parameters.Add("@Phone", SqlDbType.NVarChar, 30).Value = companyData[3];
+                        cmd.Parameters.Add("@Website", SqlDbType.NVarChar, 200).Value = companyData[4];
+                        cmd.Parameters.Add("@SICCode", SqlDbType.NVarChar, 50).Value = companyData[5];
+                        cmd.Parameters.Add("@VatNumber", SqlDbType.NVarChar, 20).Value = string.IsNullOrEmpty(companyData[6]) ? "0" : companyData[6];
+                        cmd.Parameters.Add("@SICDescription", SqlDbType.NVarChar, 500).Value = companyData[7];
+                        cmd.Parameters.Add("@Industry", SqlDbType.NVarChar, 300).Value = companyData[8];
+                        cmd.Parameters.Add("@LegalForm", SqlDbType.NVarChar, 100).Value = companyData[9];
+                        cmd.Parameters.Add("@RegistrationNo", SqlDbType.NVarChar, 15).Value = string.IsNullOrEmpty(companyData[10]) ? "0" : companyData[10];
+                        cmd.Parameters.Add("@Address", SqlDbType.NVarChar, 100).Value = companyData[11];
+                        cmd.Parameters.Add("@AlexaRank", SqlDbType.NVarChar, 50).Value = companyData[12];
+                        cmd.Parameters.Add("@MonthlyVisits", SqlDbType.NVarChar, 12).Value = companyData[13];
+                        cmd.Parameters.Add("@EmployeeNumber", SqlDbType.NVarChar, 10).Value = companyData[14];
+                        cmd.Parameters.Add("@TurnOver", SqlDbType.NVarChar, 20).Value = companyData[15];
+                        cmd.Parameters.Add("@Age", SqlDbType.NVarChar, 10).Value = companyData[16];
 
-                app.writeDataToDB(companyData);
+                        app.cn.Open();
+                        if (!string.IsNullOrEmpty(companyData[2]) || !string.IsNullOrEmpty(companyData[3]) || !string.IsNullOrEmpty(companyData[4]) ||
+                            !string.IsNullOrEmpty(companyData[5]) || !string.IsNullOrEmpty(companyData[7]) || !string.IsNullOrEmpty(companyData[8]) ||
+                            !string.IsNullOrEmpty(companyData[9]) || !string.IsNullOrEmpty(companyData[10]) || !string.IsNullOrEmpty(companyData[11]) )
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                        app.cn.Close();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    app.cn.Close();
+                    app.log(ex, " sql db insert");
+                }
 
                 try
                 {
@@ -241,26 +282,7 @@ namespace ConsoleApp1
             SelectCountry.Click();*/
         }
 
-        CorporationDateModel calculateAndSetCorporationDate(string oldStartDate, string oldEndDate)
-        {
-            int numberOfDesiredRows = 0; //set number of rows founds
-            while(numberOfDesiredRows !< 7000 )
-            {
-                if(7000 < numberOfDesiredRows )
-                {
-                    // reduce date difference
-
-                }
-                /*else if(numberOfDesiredRows < 4000)
-                {
-                    //increase date differance
-                }*/
-            }
-            return new CorporationDateModel(false);
-        }
-
-        /* filtering region by region has kind of failed
-         * int selectRegion(string regionIndex)
+        int selectRegion(string regionIndex)
         {
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[1]/div/div[3]/div[7]/div[2]/div/div[1]/div[2]/div/ul/li/span[1]")));
 
@@ -278,7 +300,7 @@ namespace ConsoleApp1
 
             Thread.Sleep(2000);
             return count;
-        }*/
+        }
 
         void waitForPhoneAndMailToBeLoaded(IWebElement email, IWebElement phone)
         {
@@ -294,7 +316,7 @@ namespace ConsoleApp1
                     wait.Until(ExpectedConditions.ElementToBeClickable(email));
                     email.Click();
                 }
-               Thread.Sleep(100);
+                Thread.Sleep(100);
             }
             while (true)
             {
@@ -347,65 +369,11 @@ namespace ConsoleApp1
             writetext.WriteLine(ex.Message);
             writetext.Flush();
         }
-
-        void writeDataToDB(List<string> companyData)
-        {
-            string query = "INSERT INTO CompanyInfoAll VALUES (@CompanyName, @CompanyEmail, @Phone, @Website, @SICCode, @VatNumber, @SICDescription, @Industry, @LegalForm, @RegistrationNo, @Address, @AlexaRank, @MonthlyVisits, @EmployeeNumber, @TurnOver, @Age)";
-            try
-            {
-                using (SqlCommand cmd = new SqlCommand(query, cn))
-                {
-                    cmd.Parameters.Add("@CompanyName", SqlDbType.NVarChar, 100).Value = string.IsNullOrEmpty(companyData[1]) ? "0" : companyData[1];
-                    cmd.Parameters.Add("@CompanyEmail", SqlDbType.NVarChar, 100).Value = companyData[2];
-                    cmd.Parameters.Add("@Phone", SqlDbType.NVarChar, 30).Value = companyData[3];
-                    cmd.Parameters.Add("@Website", SqlDbType.NVarChar, 200).Value = companyData[4];
-                    cmd.Parameters.Add("@SICCode", SqlDbType.NVarChar, 50).Value = companyData[5];
-                    cmd.Parameters.Add("@VatNumber", SqlDbType.NVarChar, 20).Value = string.IsNullOrEmpty(companyData[6]) ? "0" : companyData[6];
-                    cmd.Parameters.Add("@SICDescription", SqlDbType.NVarChar, 500).Value = companyData[7];
-                    cmd.Parameters.Add("@Industry", SqlDbType.NVarChar, 300).Value = companyData[8];
-                    cmd.Parameters.Add("@LegalForm", SqlDbType.NVarChar, 100).Value = companyData[9];
-                    cmd.Parameters.Add("@RegistrationNo", SqlDbType.NVarChar, 15).Value = string.IsNullOrEmpty(companyData[10]) ? "0" : companyData[10];
-                    cmd.Parameters.Add("@Address", SqlDbType.NVarChar, 100).Value = companyData[11];
-                    cmd.Parameters.Add("@AlexaRank", SqlDbType.NVarChar, 50).Value = companyData[12];
-                    cmd.Parameters.Add("@MonthlyVisits", SqlDbType.NVarChar, 12).Value = companyData[13];
-                    cmd.Parameters.Add("@EmployeeNumber", SqlDbType.NVarChar, 10).Value = companyData[14];
-                    cmd.Parameters.Add("@TurnOver", SqlDbType.NVarChar, 20).Value = companyData[15];
-                    cmd.Parameters.Add("@Age", SqlDbType.NVarChar, 10).Value = companyData[16];
-
-                    cn.Open();
-                    if (!string.IsNullOrEmpty(companyData[2]) || !string.IsNullOrEmpty(companyData[3]) || !string.IsNullOrEmpty(companyData[4]) ||
-                        !string.IsNullOrEmpty(companyData[5]) || !string.IsNullOrEmpty(companyData[7]) || !string.IsNullOrEmpty(companyData[8]) ||
-                        !string.IsNullOrEmpty(companyData[9]) || !string.IsNullOrEmpty(companyData[10]) || !string.IsNullOrEmpty(companyData[11]))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    cn.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                cn.Close();
-                log(ex, " sql db insert");
-            }
-        }
-    }
-
-    public class CorporationDateModel
-    {
-        public bool wasDateIntervalAltered { get; set; }
-        public string newStartDate { get; set; }
-        public string newEndDate { get; set; }
-
-        public CorporationDateModel(bool wasDateIntervalAltered)
-        {
-            this.wasDateIntervalAltered = wasDateIntervalAltered;
-        }
-
-        public CorporationDateModel(bool wasDateIntervalAltered, string startDate, string endDate)
-        {
-            this.wasDateIntervalAltered = wasDateIntervalAltered;
-            this.newStartDate = startDate;
-            this.newEndDate = endDate;
-        }
     }
 }
+
+
+
+
+
+
