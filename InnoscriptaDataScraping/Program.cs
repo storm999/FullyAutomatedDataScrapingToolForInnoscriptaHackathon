@@ -150,21 +150,21 @@ namespace ConsoleApp1
                 Thread.Sleep(5);
                 try
                 {
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div"))));
+                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[3]/div"))));
                     //IWebElement email = row.FindElement(By.XPath("//div[text()='Show email']")); // thats probably slower
                     IWebElement email = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[3]/div"));
                     app.wait.Until(ExpectedConditions.ElementToBeClickable(email));
                     email.Click();
 
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4] / div / div[2] / div / div[2] / div[2] / table / tbody / tr[" + i + "] / td[4] / div"))));
+                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[4]/div"))));
                     //IWebElement phone = row.FindElement(By.XPath("//div[text()='Show phone']")); // thats probably slower
-                    IWebElement phone = row.FindElement(By.XPath("/ html / body / div[1] / div / div[4] / div / div[2] / div / div[2] / div[2] / table / tbody / tr[" + i + "] / td[4] / div"));
+                    IWebElement phone = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[4]/div"));
                     app.wait.Until(ExpectedConditions.ElementToBeClickable(phone));
                     phone.Click();
 
                     app.waitForPhoneAndMailToBeLoaded(email, phone);
                 }
-                catch (Exception ex) { app.log(ex , " After show email phone click"); }
+                catch (Exception ex) { app.log(ex , " After show email phone click");}
 
                 Thread.Sleep(5);
                 try 
