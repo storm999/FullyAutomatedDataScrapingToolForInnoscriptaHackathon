@@ -247,22 +247,29 @@ namespace ConsoleApp1
         {
             IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
             int numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text); 
-           
+            string startDateToBeSet = new DateTime(1800,01,01);
+            
             while(numberOfDesiredRows !< 7000 )
             {
                 if(7000 < numberOfDesiredRows )
                 {
-                    // reduce date difference
                     if(oldStartDate != "null_date")
                     {
-                        IWebElement maxNoForm = webDriver.FindElement(By.XPath("")); //endDate
-                        wait.Until(ExpectedConditions.ElementToBeClickable(endDateForm));
+                        IWebElement endDateForm = webDriver.FindElement(By.XPath("")); //endDate
+                        wait.Until(ExpectedConditions.ElementIsVisible(endDateForm));
                         endDateForm.Clear();   
                         endDateForm.SendKeys(oldStartDate); // old startDate is new endDate
                     }
+                    //set start Date
+                    IWebElement startDateForm = webDriver.FindElement(By.XPath("")); //startDate
+                    wait.Until(ExpectedConditions.ElementIsVisible(startDateForm));
+                    startDateForm.Clear();   
+                    startDateForm.SendKeys(startDateToBeSet); // old startDate is new endDate
+                    
                     getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
                     numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text);
-
+                    
+                    startDateToBeSet = ; //set to half
                 }
                 return new CorporationDateModel(true, new DateTime().ToString());
                 /*else if(numberOfDesiredRows < 4000)
