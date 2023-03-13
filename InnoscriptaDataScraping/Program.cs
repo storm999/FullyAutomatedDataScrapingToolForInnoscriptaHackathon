@@ -253,11 +253,13 @@ namespace ConsoleApp1
                 if(7000 < numberOfDesiredRows )
                 {
                     // reduce date difference
-                    IWebElement maxNoForm = webDriver.FindElement(By.XPath("")); //endDate
-                    wait.Until(ExpectedConditions.ElementToBeClickable(maxNoForm));
-                    maxNoForm.Clear();
-                    maxNoForm.SendKeys(oldStartDate); // old startDate is new endDate
-                    
+                    if(oldStartDate != "null_date")
+                    {
+                        IWebElement maxNoForm = webDriver.FindElement(By.XPath("")); //endDate
+                        wait.Until(ExpectedConditions.ElementToBeClickable(endDateForm));
+                        endDateForm.Clear();   
+                        endDateForm.SendKeys(oldStartDate); // old startDate is new endDate
+                    }
                     getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
                     numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text);
 
