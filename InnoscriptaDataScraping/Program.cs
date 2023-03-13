@@ -89,7 +89,8 @@ namespace ConsoleApp1
             CorporationDateModel dateIntervalObject = app.calculateAndSetCorporationDate(args[1]);
             bool wasDateIntervalChanged = dateIntervalObject.wasDateIntervalAltered;
 
-            app.setNumberOfEmployeeInterval(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
+            //app.setNumberOfEmployeeInterval(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
+            app.setNumberOfEmployeeInterval(app.employeeNumberMinMaxList[Convert.ToInt32(args[0])].Item1, app.employeeNumberMinMaxList[Convert.ToInt32(args[0])].Item2);
 
             app.wait.Until(ExpectedConditions.ElementExists(By.CssSelector("tr[class='rc-table-row rc-table-row-level-0']")));
 
@@ -247,7 +248,7 @@ namespace ConsoleApp1
         {
             IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
             int numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text); 
-            string startDateToBeSet = new DateTime(1800,01,01);
+            DateTime startDateToBeSet = new DateTime(1800,01,01);
             
             while(numberOfDesiredRows !< 7000 )
             {
@@ -255,23 +256,23 @@ namespace ConsoleApp1
                 {
                     if(oldStartDate != "null_date")
                     {
-                        IWebElement endDateForm = webDriver.FindElement(By.XPath("")); //endDate
-                        wait.Until(ExpectedConditions.ElementIsVisible(endDateForm));
+                        IWebElement endDateForm = webDriver.FindElement(By.XPath("")); //endDateForm
+                        wait.Until(ExpectedConditions.ElementToBeClickable(endDateForm));
                         endDateForm.Clear();   
                         endDateForm.SendKeys(oldStartDate); // old startDate is new endDate
                     }
                     //set start Date
-                    IWebElement startDateForm = webDriver.FindElement(By.XPath("")); //startDate
-                    wait.Until(ExpectedConditions.ElementIsVisible(startDateForm));
+                    IWebElement startDateForm = webDriver.FindElement(By.XPath("")); //startDateForm
+                    wait.Until(ExpectedConditions.ElementToBeClickable(startDateForm));
                     startDateForm.Clear();   
-                    startDateForm.SendKeys(startDateToBeSet); // old startDate is new endDate
+                    startDateForm.SendKeys(startDateToBeSet.ToString()); //!!! CHECK THIS , Be carful FOR DATE FORMAT
                     
                     getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
                     numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text);
                     
-                    startDateToBeSet = ; //set to half
+                    startDateToBeSet = new DateTime(0,0,startDateToBeSet.Day + (DateTime.Now- startDateToBeSet).Days/2); //set to half
                 }
-                return new CorporationDateModel(true, new DateTime().ToString());
+                return new CorporationDateModel(true, startDateToBeSet.ToString());
                 /*else if(numberOfDesiredRows < 4000)
                 {
                     //increase date differance
