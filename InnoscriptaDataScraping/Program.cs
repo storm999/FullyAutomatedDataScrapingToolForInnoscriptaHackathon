@@ -86,7 +86,8 @@ namespace ConsoleApp1
             //using region as filtering is not good idea because around 300k companies are not filtered in any region
             //int numberOfRegions = app.selectRegion(args[2]);  
 
-            bool wasDateIntervalChanged = app.calculateAndSetCorporationDate(args[1] , args[2]).wasDateIntervalAltered;
+            CorporationDateModel dateIntervalObject = app.calculateAndSetCorporationDate(args[1]);
+            bool wasDateIntervalChanged = dateIntervalObject.wasDateIntervalAltered;
 
             app.setNumberOfEmployeeInterval(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
 
@@ -118,12 +119,13 @@ namespace ConsoleApp1
                     
                     if (wasDateIntervalChanged)
                     {
-                        CorporationDateModel dateModel = app.calculateAndSetCorporationDate(args[1], args[2]);
-                        arguments = Convert.ToInt32(args[0]).ToString() + " " + dateModel.newStartDate + " " + dateModel.newEndDate;
+                        //CorporationDateModel dateModel = app.calculateAndSetCorporationDate(args[1], args[2]);
+                        //arguments = Convert.ToInt32(args[0]).ToString() + " " + dateModel.newStartDate + " " + dateModel.newEndDate;
+                        arguments = Convert.ToInt32(args[0]).ToString() + " " + dateIntervalObject.newStartDate + " true";
                     }
                     else
                     {
-                        arguments = (Convert.ToInt32(args[0]) + 1).ToString() + " 1500-01-01 2024-01-01";
+                        arguments = (Convert.ToInt32(args[0]) + 1).ToString() + " null_date false" ;
                     }
                     app.writetext.Close();
                     // Restart current application, with different filters
@@ -149,11 +151,11 @@ namespace ConsoleApp1
                 {
                     app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div"))));
                     //IWebElement email = row.FindElement(By.XPath("//div[text()='Show email']")); // thats probably slower
-                    IWebElement email = row.FindElement(By.XPath("/ html / body / div[1] / div / div[4] / div / div[2] / div / div[2] / div[2]/table/tbody/tr["+i+"]/td[3]/div"));
+                    IWebElement email = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[3]/div"));
                     app.wait.Until(ExpectedConditions.ElementToBeClickable(email));
                     email.Click();
 
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/ html / body / div[1] / div / div[4] / div / div[2] / div / div[2] / div[2] / table / tbody / tr[" + i + "] / td[4] / div"))));
+                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4] / div / div[2] / div / div[2] / div[2] / table / tbody / tr[" + i + "] / td[4] / div"))));
                     //IWebElement phone = row.FindElement(By.XPath("//div[text()='Show phone']")); // thats probably slower
                     IWebElement phone = row.FindElement(By.XPath("/ html / body / div[1] / div / div[4] / div / div[2] / div / div[2] / div[2] / table / tbody / tr[" + i + "] / td[4] / div"));
                     app.wait.Until(ExpectedConditions.ElementToBeClickable(phone));
@@ -241,21 +243,22 @@ namespace ConsoleApp1
             SelectCountry.Click();*/
         }
 
-        CorporationDateModel calculateAndSetCorporationDate(string oldStartDate, string oldEndDate)
+        CorporationDateModel calculateAndSetCorporationDate(string oldStartDate)
         {
-            IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));;
-            
+            IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
             int numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text); 
+           
             while(numberOfDesiredRows !< 7000 )
             {
                 if(7000 < numberOfDesiredRows )
                 {
                     // reduce date difference
-                    
-                    webDriver.FindElement(By.XPath(" "));
-                    
+
+                    getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
+                    numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text);
+
                 }
-                return new CorporationDateModel(true);
+                return new CorporationDateModel(true, new DateTime().ToString());
                 /*else if(numberOfDesiredRows < 4000)
                 {
                     //increase date differance
@@ -404,6 +407,12 @@ namespace ConsoleApp1
         public CorporationDateModel(bool wasDateIntervalAltered)
         {
             this.wasDateIntervalAltered = wasDateIntervalAltered;
+        }
+
+        public CorporationDateModel(bool wasDateIntervalAltered, string startDate)
+        {
+            this.wasDateIntervalAltered = wasDateIntervalAltered;
+            this.newStartDate = startDate;
         }
 
         public CorporationDateModel(bool wasDateIntervalAltered, string startDate, string endDate)
