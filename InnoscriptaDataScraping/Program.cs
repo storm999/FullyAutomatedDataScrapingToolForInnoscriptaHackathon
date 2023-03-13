@@ -243,14 +243,19 @@ namespace ConsoleApp1
 
         CorporationDateModel calculateAndSetCorporationDate(string oldStartDate, string oldEndDate)
         {
-            int numberOfDesiredRows = 0; //set number of rows founds
+            IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));;
+            
+            int numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text); 
             while(numberOfDesiredRows !< 7000 )
             {
                 if(7000 < numberOfDesiredRows )
                 {
                     // reduce date difference
-
+                    
+                    webDriver.FindElement(By.XPath(" "));
+                    
                 }
+                return new CorporationDateModel(true);
                 /*else if(numberOfDesiredRows < 4000)
                 {
                     //increase date differance
