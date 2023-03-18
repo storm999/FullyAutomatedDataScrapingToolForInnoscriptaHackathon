@@ -2,12 +2,12 @@
 That is a data scraping tool for scraping data from globaldatabase.com
 It is a C# console application.
 
-##Packages
+## Packages
 To be able to compile source code, you need to install selenium library.
 
-##Execution
+## Execution
 
-#Version 1:
+# Version 1:
 Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
 
 The program takes 3 arguments from console. 
@@ -18,7 +18,7 @@ The program takes 3 arguments from console.
 Once all regions are iterated for given minimum and maximum employee numbers, 
 minimum number of employees will be decreased by one and it also will be set as maximum as well and region will start from beginning too.
 
-#Version 2:
+# Version 2:
 Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
 
 The program takes 3 arguments from console. 
