@@ -17,7 +17,7 @@ SQL connection string is hard-coded.
 The program takes 3 arguments from console. 
 1st argument is minimum number of employees,
 2nd argument is maximum number of employees,
-3rd argument is starting region index. It just just 1 in default. It will be automatically changed for next iterations.
+3rd argument is starting region index. Region index just 1 in default. It will be automatically changed for next iterations.
 
 Once all regions are iterated for given minimum and maximum employee numbers, 
 minimum number of employees will be decreased by one and it also will be set as maximum as well and region will start from beginning too.

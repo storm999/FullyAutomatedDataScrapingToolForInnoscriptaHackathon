@@ -1,5 +1,5 @@
 # Introduction
-That is a data scraping tool for scraping data from globaldatabase.com
+That is a data scraping tool for scraping data from globaldatabase.com.
 It is a C# console application.
 
 # Packages
