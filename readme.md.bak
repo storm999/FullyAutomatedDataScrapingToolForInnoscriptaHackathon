@@ -3,9 +3,9 @@ That is a data scraping tool for scraping data from globaldatabase.com
 It is a C# console application.
 
 # Packages
-Selenium.WebDriver 4.8.1
-Selenium.Support 4.8.1
-DotNetSeleniumExtras.WaitHelpers 3.11.0
+*Selenium.WebDriver 4.8.1
+*Selenium.Support 4.8.1
+*DotNetSeleniumExtras.WaitHelpers 3.11.0
 
 # Execution
 
