@@ -33,7 +33,7 @@ SQL connection string is hard-coded.
 The program takes 3 arguments from console. 
 1st argument is the index of the list where minimum and maximum number of employees are stored as hard-coded.
 2nd argument is 'null_date' in default. It will be automatically calculated and set for next iterations.
-3rd argument is 'false' in defaul. It basically indicates either to change date interval or employee number. This will be handled automatically too.
+3rd argument is 'false' in default. It basically indicates either date interval or employee number will be changed in the new iteration. This will be handled automatically too.
 
 List that holds minimum and maximum number of employees list must be defined by user manually. 
 Making an generic one that would work any for country, would be possible too.
