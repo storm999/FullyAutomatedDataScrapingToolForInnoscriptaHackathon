@@ -1,5 +1,5 @@
 # Introduction
-That is a data scraping tool for scraping data from globaldatabase.com.
+That is a data scraping tool for scraping data from globaldatabase.com.\
 It is a C# console application.
 
 # Packages
@@ -10,8 +10,8 @@ It is a C# console application.
 # Execution
 
 ## Version 1:
-Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
-Login credentials are hard-coded.
+Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.\
+Login credentials are hard-coded.\
 SQL connection string is hard-coded.
 
 The program takes 3 arguments from console. 
@@ -26,8 +26,8 @@ minimum number of employees will be decreased by one and it also will be set as 
 As I lost access to data source when i was developing 2nd version, this version may be called as beta edition.
 However, it is very close to release version.
 
-Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
-Login credentials are hard-coded too.
+Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.\
+Login credentials are hard-coded too.\
 SQL connection string is hard-coded.
 
 The program takes 3 arguments from console. 
