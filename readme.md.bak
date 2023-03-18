@@ -26,8 +26,8 @@ minimum number of employees will be decreased by one and it also will be set as 
 As I lost access to data source when i was developing 2nd version, this version may be called as beta edition.
 However, it is very close to release version.
 
-Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
-Login credentials are hard-coded too.
+Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.\
+Login credentials are hard-coded too.\
 SQL connection string is hard-coded.
 
 The program takes 3 arguments from console. 
@@ -41,6 +41,8 @@ Making an generic one that would work any for country, would be possible too.
 # Possible Improvements
 Obviously there are many possible improvements.
 
-First of all, moving hard-coded values to outside of program could be nice. So these values can be changed without need of compiling the code.
+First of all, moving hard-coded values to outside of program could be nice. So these values can be changed without need of re-compiling the code.
 
-Speed of scraping can be optimized. I didnt have so much time to work on it.
+Speed of scraping can be optimized. It is not slow though, but I didnt have so much time to work on it.
+
+Refactoring and cleaning the code could be another need.

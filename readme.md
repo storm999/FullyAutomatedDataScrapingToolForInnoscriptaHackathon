@@ -41,6 +41,8 @@ Making an generic one that would work any for country, would be possible too.
 # Possible Improvements
 Obviously there are many possible improvements.
 
-First of all, moving hard-coded values to outside of program could be nice. So these values can be changed without need of compiling the code.
+First of all, moving hard-coded values to outside of program could be nice. So these values can be changed without need of re-compiling the code.
 
-Speed of scraping can be optimized. I didnt have so much time to work on it.
+Speed of scraping can be optimized. It is not slow though, but I didnt have so much time to work on it.
+
+Refactoring and cleaning the code could be another need. I would do it, if I have not lost access to data source.
