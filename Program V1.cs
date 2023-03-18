@@ -95,8 +95,7 @@ namespace ConsoleApp1
             app.wait.Until(ExpectedConditions.ElementExists(By.CssSelector("tr[class='rc-table-row rc-table-row-level-0']")));
 
             Thread.Sleep(4000);
-            //List<List<object>> ScrapedData = new();
-            //foreach (var row in DataTable.FindElements(By.CssSelector("tr[class='rc-table-row rc-table-row-level-0']"))) 
+
             int i = 1; 
             IWebElement row = app.webDriver.FindElement(By.XPath("//*[@id=\"scrollable-table\"]/div[2]/div[2]/table/tbody/tr[" + i + "]"));
 
@@ -112,19 +111,19 @@ namespace ConsoleApp1
                 catch (Exception ex)
                 {
                     app.log(ex, " After find next row");
-                    //When code comes here, probably there is no more rows loaded. According to my personal observations, default limit is 10 000 rows
-                    //It may be good idea to wait less than a minute for data to be loaded, if not, then change filter
-                    //for the filter, my first idea was to go region by region 
-                    //Better (easier) idea should be to go by entering sequential number of employees intervals to filter boxes
-                    //However when filter needs to be changed, restarting the process WITH NEW FILTERS would be wise idea for released unnecessary ram usage.
+                    //When code comes here, it means there is no more rows loaded. According to my personal observations, default limit is around 10 000 rows.
+                    //So now we should change filter to load new data.
+                    //For the filter, my first idea was to go region by region 
+                    //Apperently better idea is to used 'Corporation Data interval'
+                    //However when filter needs to be changed, restarting the process WITH NEW FILTERS would be wise idea for releasing unnecessary ram usage.
                     //Or we need to find another way to free the ram
                     string arguments = "";
-                    if (args[2] == numberOfRegions.ToString())
+                    if (args[2] == numberOfRegions.ToString()) // if all regions are iterated, reduce empoloye number by one
                     {
                         arguments = (Convert.ToInt32(args[0]) - 1).ToString();
                         arguments = arguments + " " + arguments + " " + "1" ;
                     }
-                    else
+                    else // iterated all regions for same employee number
                     {
                         arguments = args[0] + " " + args[0] + " " + (Convert.ToInt32(args[2]) + 1).ToString(); ;
                     }
@@ -184,7 +183,7 @@ namespace ConsoleApp1
                 catch (Exception ex){ app.log(ex, " row.FindElements(By.TagName('td')"); }
                 try
                 {
-                    //Once row is process, scroll to next row, that is a must to avoid delays and consequent interruptions when loading next data 
+                    //Once row is processed, scroll to next row, that is a must to avoid delays and consequent interruptions when loading next data 
                     app.webDriver.ExecuteJavaScript("arguments[0].scrollIntoView();", row);
                 }
                 catch(Exception ex) { app.log(ex , " scroll down");}

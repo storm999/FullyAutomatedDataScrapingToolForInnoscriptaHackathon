@@ -2,7 +2,7 @@
   "profiles": {
     "InnoscriptaDataScraping": {
       "commandName": "Project",
-      "commandLineArgs": "42 42 1"
+      "commandLineArgs": "0 null_date false"
     }
   }
 }

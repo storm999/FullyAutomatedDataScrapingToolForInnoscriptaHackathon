@@ -27,7 +27,6 @@ namespace ConsoleApp1
         StreamWriter writetext;
         IWebDriver webDriver;
         WebDriverWait wait;
-        int minMaxListCounter = 48;
     
         public Program()
         {
@@ -65,12 +64,11 @@ namespace ConsoleApp1
                 employeeNumberMinMaxList.Add(new Tuple<int, int>(0, 0));
             }
             catch (Exception ex) { log(ex, " constructor"); }
-            }
+        }
 
         static void Main(string[] args )
         {
             Program app = new Program();
-            //string[] argsComing = Environment.GetCommandLineArgs();
 
             if (args[0] == app.employeeNumberMinMaxList.Count.ToString())
             {
@@ -83,29 +81,24 @@ namespace ConsoleApp1
        
             app.findCountry(app.webDriver, "Sweden");
 
+            //app.setNumberOfEmployeeInterval(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
+            app.setNumberOfEmployeeInterval(app.employeeNumberMinMaxList[Convert.ToInt32(args[0])].Item1, app.employeeNumberMinMaxList[Convert.ToInt32(args[0])].Item2);
+
             //using region as filtering is not good idea because around 300k companies are not filtered in any region
             //int numberOfRegions = app.selectRegion(args[2]);  
 
             CorporationDateModel dateIntervalObject = app.calculateAndSetCorporationDate(args[1]);
-            bool wasDateIntervalChanged = dateIntervalObject.wasDateIntervalAltered;
-
-            //app.setNumberOfEmployeeInterval(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
-            app.setNumberOfEmployeeInterval(app.employeeNumberMinMaxList[Convert.ToInt32(args[0])].Item1, app.employeeNumberMinMaxList[Convert.ToInt32(args[0])].Item2);
-
-            app.wait.Until(ExpectedConditions.ElementExists(By.CssSelector("tr[class='rc-table-row rc-table-row-level-0']")));
 
             Thread.Sleep(4000);
-            int i = 1; 
-            IWebElement row = app.webDriver.FindElement(By.XPath("//*[@id=\"scrollable-table\"]/div[2]/div[2]/table/tbody/tr[" + i + "]"));
-
+            int i = 1;
+            IWebElement row = null;
+           
             while (true)
-            {
-                List<string> companyData = new();
+            { 
                 try
-                {   
-                    app.wait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]")));
-                    row = app.webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]"));
+                {
                     i++;
+                    row = app.clickAndWaitForPhoneAndMailToBeLoaded(i);
                 }
                 catch (Exception ex)
                 {
@@ -118,7 +111,7 @@ namespace ConsoleApp1
                     //Or we need to find another way to free the ram
                     string arguments = "";
                     
-                    if (wasDateIntervalChanged)
+                    if (dateIntervalObject.wasDateIntervalAltered)
                     {
                         //CorporationDateModel dateModel = app.calculateAndSetCorporationDate(args[1], args[2]);
                         //arguments = Convert.ToInt32(args[0]).ToString() + " " + dateModel.newStartDate + " " + dateModel.newEndDate;
@@ -133,54 +126,11 @@ namespace ConsoleApp1
                     System.Diagnostics.Process.Start("InnoscriptaDataScraping.exe", arguments);
                     app.webDriver.Quit();
                     Environment.Exit(0);
-                    /*if (app.minMaxListCounter < 0)
-                    {
-                        app.setNumberOfEmployeeInterval(app.minMaxListCounter, app.minMaxListCounter);
-                        app.minMaxListCounter--;
-                    }
-                    Thread.Sleep(5000);
-                    i = 2;
-                    app.wait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]")));
-                    row = app.webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]"));
-                    i++;
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row));
-                    app.log(ex, " Rows with minMax condition are started to be called");*/
                 }
+
 
                 Thread.Sleep(5);
-                try
-                {
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[3]/div"))));
-                    //IWebElement email = row.FindElement(By.XPath("//div[text()='Show email']")); // thats probably slower
-                    IWebElement email = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[3]/div"));
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(email));
-                    email.Click();
-
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[4]/div"))));
-                    //IWebElement phone = row.FindElement(By.XPath("//div[text()='Show phone']")); // thats probably slower
-                    IWebElement phone = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr["+i+"]/td[4]/div"));
-                    app.wait.Until(ExpectedConditions.ElementToBeClickable(phone));
-                    phone.Click();
-
-                    app.waitForPhoneAndMailToBeLoaded(email, phone);
-                }
-                catch (Exception ex) { app.log(ex , " After show email phone click");}
-
-                Thread.Sleep(5);
-                try 
-                {
-                    app.wait.Until(ExpectedConditions.ElementExists(By.TagName("td")));
-                    foreach (var cell in row.FindElements(By.TagName("td")))
-                    {
-                        try
-                        {
-                            Thread.Sleep(2);
-                            companyData.Add(cell.Text);
-                        }
-                        catch (Exception ex){ app.log(ex, " add cellText to list"); }
-                    }
-                }
-                catch (Exception ex){ app.log(ex, " row.FindElements(By.TagName('td')"); }
+                List<string> companyData = app.iterateRowCells(row);
                 try
                 {
                     //Once row is process, scroll to next row, that is a must to avoid delays and consequent interruptions when loading next data 
@@ -192,13 +142,11 @@ namespace ConsoleApp1
 
                 try
                 {
-                    //in UI we always need some data to be able to load next data
-                    if(i<100)
+                    if(i<100)   //in UI we always need some data to be able to load next data
                     {
                         continue;
                     }
-                    //Avoids memory-use to become too high too soon.
-                    //It reduces ram usage drastically, But still not definite solution
+                    //Avoids memory-use to become too high too soon.It reduces ram usage drastically, But still not definite solution
                     app.webDriver.ExecuteJavaScript("var ele=arguments[0]; ele.innerHTML = '';", row);
                     //webDriver.ExecuteJavaScript("var ele=arguments[0]; ele.remove();", row);
                     //row.Clear();  
@@ -224,7 +172,7 @@ namespace ConsoleApp1
         {
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//span[contains(@class, 'item-title') and text()='Location']")));
 
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
             IWebElement Location = webDriver.FindElement(By.XPath("//span[contains(@class, 'item-title') and text()='Location']"));
             Location.Click();
 
@@ -238,47 +186,113 @@ namespace ConsoleApp1
             CountrySearchForm.SendKeys(countryFullName);
 
             Thread.Sleep(1000);
-            /*wait.Until(ExpectedConditions.ElementExists(By.XPath("//span[contains(@class, 'ant-tree-checkbox-inner')]")));
+            wait.Until(ExpectedConditions.ElementExists(By.XPath("//span[contains(@class, 'ant-tree-checkbox-inner')]")));
             Thread.Sleep(1000);
             IWebElement SelectCountry = webDriver.FindElement(By.XPath("//span[contains(@class, 'ant-tree-checkbox-inner')]"));
-            SelectCountry.Click();*/
+            SelectCountry.Click();
         }
 
         CorporationDateModel calculateAndSetCorporationDate(string oldStartDate)
         {
-            IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
-            int numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text); 
+            wait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[1]/div/div[1]/span[2]")));
+            Thread.Sleep(6000);
+            IWebElement getCountOfFoundRows = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[1]/div/div[1]/span[2]"));
+            int numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text.Replace(",","").Trim()); 
             DateTime startDateToBeSet = new DateTime(1800,01,01);
-            
-            while(numberOfDesiredRows !< 7000 )
+           // DateTime startDateToBeSet = new DateTime(2022,01,01);
+            if(numberOfDesiredRows< 7000)
             {
-                if(7000 < numberOfDesiredRows )
+                return new CorporationDateModel(false);
+            }
+            bool isIncorporationTabOpen = false;
+            bool isStartDateFormOpen = false;
+            while (7000 < numberOfDesiredRows)
+            {
+                if (!isIncorporationTabOpen)
                 {
-                    if(oldStartDate != "null_date")
+                    IWebElement IncorporationDate = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[2]/div/div[7]/div"));
+                    wait.Until(ExpectedConditions.ElementToBeClickable(IncorporationDate));
+                    IncorporationDate.Click();
+                    Thread.Sleep(100);
+                    isIncorporationTabOpen = true;
+                }
+                if (7000 < numberOfDesiredRows)
+                {
+                    if (oldStartDate != "null_date")
                     {
-                        IWebElement endDateForm = webDriver.FindElement(By.XPath("")); //endDateForm
+                        IWebElement endDateForm = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[2]/div/div[7]/div[2]/div/div/span[2]/div/input")); //endDateForm
                         wait.Until(ExpectedConditions.ElementToBeClickable(endDateForm));
-                        endDateForm.Clear();   
-                        endDateForm.SendKeys(oldStartDate); // old startDate is new endDate
+                        endDateForm.Click();
+                        Thread.Sleep(2000);
+                       // IWebElement endDateForm2 = webDriver.FindElement(By.XPath(("//input[@class='ant-calendar-input' and placeholder='To']]"))); //startDateForm
+                        IWebElement endDateForm2 = webDriver.FindElement(By.ClassName("ant-calendar-input")); //startDateForm
+                       // IWebElement endDateForm2 = webDriver.FindElement(By.XPath("//input[contains(@class, 'ant-calendar-input ') and placeholder='To']")); //startDateForm
+                        wait.Until(ExpectedConditions.ElementToBeClickable(endDateForm2));
+                        webDriver.ExecuteJavaScript("arguments[0].removeAttribute('readonly')", endDateForm2);
+                        endDateForm2.Clear();
+                        endDateForm2.SendKeys(oldStartDate);
+                        log("oldStartDate is set to: " + oldStartDate);
                     }
                     //set start Date
-                    IWebElement startDateForm = webDriver.FindElement(By.XPath("")); //startDateForm
-                    wait.Until(ExpectedConditions.ElementToBeClickable(startDateForm));
-                    startDateForm.Clear();   
-                    startDateForm.SendKeys(startDateToBeSet.ToString()); //!!! CHECK THIS , Be carful FOR DATE FORMAT
-                    
-                    getCountOfFoundRows = webDriver.FindElement(By.XPath(" "));
-                    numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text);
-                    
-                    startDateToBeSet = new DateTime(0,0,startDateToBeSet.Day + (DateTime.Now- startDateToBeSet).Days/2); //set to half
+                    //click compnay
+                    /*IWebElement Companies = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[1]/div"));
+                    wait.Until(ExpectedConditions.ElementToBeClickable(Companies));
+                    Companies.Click();
+                    Thread.Sleep(100);*/
+                    // click 
+                    if (!isStartDateFormOpen)
+                    {
+                        /*IWebElement IncorporationDate = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[2]/div/div[7]/div"));
+                        wait.Until(ExpectedConditions.ElementToBeClickable(IncorporationDate));
+                        IncorporationDate.Click();
+                        Thread.Sleep(100);
+                        isIncorporationTabOpen = true;*/
+
+
+                        IWebElement startDateForm = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[2]/div/div[7]/div[2]/div/div/span[1]/div/input")); //startDateForm
+                        wait.Until(ExpectedConditions.ElementToBeClickable(startDateForm));
+                        //webDriver.ExecuteJavaScript("arguments[0].removeAttribute('readonly')", startDateForm);
+                        startDateForm.Click();
+                        isStartDateFormOpen = true;
+                        Thread.Sleep(100);
+                        //webDriver.ExecuteJavaScript("arguments[0].removeAttribute('readonly')", startDateForm);
+                        //startDateForm = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[2]/div/div[7]/div[2]/div/div/span[1]/div/input"));
+                        wait.Until(ExpectedConditions.ElementToBeClickable(startDateForm));
+                    }
+                    //<input placeholder="From" class="ant-calendar-picker-input ant-input" value="">
+                   // webDriver.ExecuteJavaScript("arguments[0].click();", startDateForm);
+                    //startDateForm.SendKeys(startDateToBeSet.ToString("yyyy'-'MM'-'dd")); //!!! CHECK THIS , Be careful FOR DATE FORMAT
+              //      webDriver.ExecuteJavaScript("arguments[0].setAttribute('value', '" + startDateToBeSet.ToString("yyyy'-'MM'-'dd") + "')", startDateForm);
+
+                    //startDateForm.Submit();
+               //     webDriver.ExecuteJavaScript("arguments[0].click();", startDateForm);
+                    Thread.Sleep(2000);                                        
+                    //IWebElement startDateForm2 = webDriver.FindElement(By.XPath("//input[contains(@class, 'ant-calendar-input ') and placeholder='From']")); //startDateForm
+                    IWebElement startDateForm2 = webDriver.FindElement(By.ClassName("ant-calendar-input")); //startDateForm
+                    wait.Until(ExpectedConditions.ElementToBeClickable(startDateForm2));
+                    webDriver.ExecuteJavaScript("arguments[0].removeAttribute('readonly')", startDateForm2);
+                    startDateForm2.Clear();
+                    startDateForm2.SendKeys(startDateToBeSet.ToString("yyyy'-'MM'-'dd"));
+
+
+                    /*Actions action = new Actions(webDriver);
+                    action.SendKeys(startDateToBeSet.ToString("yyyy'-'MM'-'dd")).Build().Perform();*/
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[1]/div/div[1]/span[2]")));
+                    Thread.Sleep(3000);
+                    getCountOfFoundRows = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[1]/div/div[1]/span[2]"));
+                    numberOfDesiredRows = Int32.Parse(getCountOfFoundRows.Text.Replace(",", "").Trim());
+
+                    startDateToBeSet = startDateToBeSet.Add(new TimeSpan(new DateTime((DateTime.Now.Ticks - startDateToBeSet.Ticks) /2).Ticks)); //set to half
+                    log("startDateToBeSet is set to: " + startDateToBeSet.ToString());
                 }
-                return new CorporationDateModel(true, startDateToBeSet.ToString());
+
                 /*else if(numberOfDesiredRows < 4000)
                 {
                     //increase date differance
                 }*/
             }
-            return new CorporationDateModel(false);
+            return new CorporationDateModel(true, startDateToBeSet.ToString("yyyy'-'MM'-'dd"));
+
         }
 
         /* filtering region by region has kind of failed
@@ -302,35 +316,87 @@ namespace ConsoleApp1
             return count;
         }*/
 
-        void waitForPhoneAndMailToBeLoaded(IWebElement email, IWebElement phone)
+        IWebElement clickAndWaitForPhoneAndMailToBeLoaded(int i)
         {
-            while (true)
+            //   i++;
+            wait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]")));
+            IWebElement row = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]"));
+            try
             {
-                if (email.Text.Contains("@") || email.Text.Contains("Not"))
+                IWebElement email = null;
+                IWebElement phone = null;
+                
+                //     if (i%10 == 2) 
+                //   { 
+                //      for (int j = 0; j < 10; j++)
+                //    {
+                try
                 {
-                    Thread.Sleep(80);
-                    break;
-                }
-                else if (email.Text == "Show email")
-                {
+                    wait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]")));
+                    row = webDriver.FindElement(By.XPath(                "/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]"));
+                    //wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div")));
+                    //IWebElement email = row.FindElement(By.XPath("//div[text()='Show email']")); // thats probably slower
+                    email = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div"));
                     wait.Until(ExpectedConditions.ElementToBeClickable(email));
                     email.Click();
-                }
-               Thread.Sleep(100);
-            }
-            while (true)
-            {
-                if(phone.Text.Contains("+46") || phone.Text.Contains("Not"))
-                {
-                    Thread.Sleep(80);
-                    break;
-                }
-                else if(phone.Text == "Show phone")
-                {
+
+                    wait.Until(ExpectedConditions.ElementToBeClickable(row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[4]/div"))));
+                    //IWebElement phone = row.FindElement(By.XPath("//div[text()='Show phone']")); // thats probably slower
+                    phone = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[4]/div"));
                     wait.Until(ExpectedConditions.ElementToBeClickable(phone));
                     phone.Click();
+                    
                 }
-                Thread.Sleep(100);
+                catch (Exception e) { log(e, " after click show phone and email INNER"); }// break; }
+                  //  }
+              //  }
+               // i = i - 10;
+                while (true)
+                {
+                    row = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]"));
+                    email = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div"));
+                    //wait.Until(ExpectedConditions.ElementToBeClickable(email));
+
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div")));
+
+                    if (email.Text.Contains("@") || email.Text.Contains("Not"))
+                    {
+                        Thread.Sleep(10);
+                        break;
+                    }
+                    else if (email.Text == "Show email")
+                    {
+                        wait.Until(ExpectedConditions.ElementToBeClickable(email));
+                        email.Click();
+                    }
+                    Thread.Sleep(100);
+                }
+
+                while (true)
+                {
+                    phone = row.FindElement(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[4]/div"));
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[1]/div/div[4]/div/div[2]/div/div[2]/div[2]/table/tbody/tr[" + i + "]/td[3]/div")));
+
+                    //wait.Until(ExpectedConditions.ElementToBeClickable(phone));
+                    if (phone.Text.Contains("+46") || phone.Text.Contains("Not"))
+                    {
+                        Thread.Sleep(10);
+                        break;
+                    }
+                    else if (phone.Text == "Show phone")
+                    {
+                        wait.Until(ExpectedConditions.ElementToBeClickable(phone));
+                        phone.Click();
+                    }
+                    Thread.Sleep(100);
+                }
+                
+                return row;
+            }
+            catch (Exception ex) 
+            { 
+                log(ex, " After show email phone click OUTER");
+                return row;
             }
             /* couldnt make this work, so i wrote my own waiter above
             WebDriverWait waiter = new WebDriverWait(webDriver, TimeSpan.FromSeconds(1));
@@ -340,7 +406,7 @@ namespace ConsoleApp1
 
         void setNumberOfEmployeeInterval(int min, int max)
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(3000);
             IWebElement Companies = webDriver.FindElement(By.XPath("/html/body/div[1]/div/div[3]/div[4]/div[1]/div"));
             wait.Until(ExpectedConditions.ElementToBeClickable(Companies));
             Companies.Click();
@@ -368,6 +434,40 @@ namespace ConsoleApp1
             writetext.WriteLine(ex.TargetSite);
             writetext.WriteLine(ex.Message);
             writetext.Flush();
+        }
+
+        void log(string explicitLog)
+        {
+            writetext.WriteLine(DateTime.Now.ToString() + explicitLog);
+            writetext.Flush();
+        }
+
+        List<string> iterateRowCells(IWebElement row)
+        {
+            if(row != null) 
+            { 
+                try
+                {
+                    List<string> companyData = new();
+                    wait.Until(ExpectedConditions.ElementExists(By.TagName("td")));
+                    foreach (var cell in row.FindElements(By.TagName("td")))
+                    {
+                        try
+                        {
+                            Thread.Sleep(2);
+                            companyData.Add(cell.Text);
+                        }
+                        catch (Exception ex) { log(ex, " add cellText to list"); }
+                    }
+                    return companyData;
+                }
+                catch (Exception ex) 
+                { 
+                    log(ex, " row.FindElements(By.TagName('td')");
+                    return null;
+                }
+            }
+            return null;
         }
 
         void writeDataToDB(List<string> companyData)
@@ -415,8 +515,8 @@ namespace ConsoleApp1
     public class CorporationDateModel
     {
         public bool wasDateIntervalAltered { get; set; }
-        public string newStartDate { get; set; }
-        public string newEndDate { get; set; }
+        public string? newStartDate { get; set; }
+        //public string newEndDate { get; set; }
 
         public CorporationDateModel(bool wasDateIntervalAltered)
         {
@@ -429,11 +529,11 @@ namespace ConsoleApp1
             this.newStartDate = startDate;
         }
 
-        public CorporationDateModel(bool wasDateIntervalAltered, string startDate, string endDate)
+        /*public CorporationDateModel(bool wasDateIntervalAltered, string startDate, string endDate)
         {
             this.wasDateIntervalAltered = wasDateIntervalAltered;
             this.newStartDate = startDate;
             this.newEndDate = endDate;
-        }
+        }*/
     }
 }
