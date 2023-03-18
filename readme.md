@@ -47,4 +47,6 @@ First of all, moving hard-coded values to outside of program could be nice. So t
 
 Speed of scraping can be optimized. It is not slow though, but I didnt have so much time to work on it.
 
+To increase the speed, I have got an idea. We may find a way to click 'show phone' and 'show email' buttons like 10 by 10, instead of 1 by 1.
+
 Refactoring and cleaning the code could be another need. I would do it, if I have not lost access to data source.

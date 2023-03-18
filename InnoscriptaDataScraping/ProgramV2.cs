@@ -326,7 +326,7 @@ namespace ConsoleApp1
                 IWebElement email = null;
                 IWebElement phone = null;
                 
-                //     if (i%10 == 2) 
+                //     if (i%10 == 2)  //That attempmt was to increase scraping speed by clicking 'show phone' and 'show email' buttons 10 by 10.
                 //   { 
                 //      for (int j = 0; j < 10; j++)
                 //    {
