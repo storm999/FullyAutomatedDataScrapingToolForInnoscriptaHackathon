@@ -1,14 +1,15 @@
-## Introduction
+# Introduction
 That is a data scraping tool for scraping data from globaldatabase.com
 It is a C# console application.
 
-## Packages
+# Packages
 To be able to compile source code, you need to install selenium library.
 
-## Execution
+# Execution
 
-# Version 1:
+## Version 1:
 Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
+Login credentials are hard-coded too.
 
 The program takes 3 arguments from console. 
 1st argument is minimum number of employees,
@@ -18,8 +19,12 @@ The program takes 3 arguments from console.
 Once all regions are iterated for given minimum and maximum employee numbers, 
 minimum number of employees will be decreased by one and it also will be set as maximum as well and region will start from beginning too.
 
-# Version 2:
+## Version 2:
+As I lost access to data source when i was developing 2nd version, this version may be called as beta edition.
+However, it is very close to release version.
+
 Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
+Login credentials are hard-coded too.
 
 The program takes 3 arguments from console. 
 1st argument is the index of the list where minimum and maximum number of employees are stored as hard-coded.
@@ -27,4 +32,4 @@ The program takes 3 arguments from console.
 3rd argument is 'false' in defaul. It basically indicates either to change date interval or employee number. This will be handled automatically too.
 
 List that holds minimum and maximum number of employees list must be defined by user manually. 
-Making an generic one that would work any country, would be possible too.
+Making an generic one that would work any for country, would be possible too.
