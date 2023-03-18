@@ -14,8 +14,8 @@ Name of country is hard-coded as country assigned to me was definite. Changing c
 Login credentials are hard-coded.\
 SQL connection string is hard-coded.
 
-You need to run program thorugh console by sending required arguments.
-\The program takes 3 arguments from console. 
+You need to run program thorugh console by sending required arguments.\
+The program takes 3 arguments from console. 
 * 1st argument is minimum number of employees,
 * 2nd argument is maximum number of employees,
 * 3rd argument is starting region index. Region index just 1 in default. It will be automatically changed for next iterations.
@@ -31,8 +31,8 @@ Name of country is hard-coded as country assigned to me was definite. Changing c
 Login credentials are hard-coded too.\
 SQL connection string is hard-coded.
 
-You need to run program thorugh console by sending required arguments.
-\The program takes 3 arguments from console. 
+You need to run program thorugh console by sending required arguments.\
+The program takes 3 arguments from console. 
 * 1st argument is the index of the list where minimum and maximum number of employees are stored as hard-coded.
 * 2nd argument is 'null_date' in default. It will be automatically calculated and set for next iterations.
 * 3rd argument is 'false' in default. It basically indicates either date interval or employee number will be changed in the new iteration. This will be handled automatically too.
