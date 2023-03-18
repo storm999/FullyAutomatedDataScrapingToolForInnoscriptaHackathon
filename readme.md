@@ -3,13 +3,16 @@ That is a data scraping tool for scraping data from globaldatabase.com
 It is a C# console application.
 
 # Packages
-To be able to compile source code, you need to install selenium library.
+Selenium.WebDriver 4.8.1
+Selenium.Support 4.8.1
+DotNetSeleniumExtras.WaitHelpers 3.11.0
 
 # Execution
 
 ## Version 1:
 Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
-Login credentials are hard-coded too.
+Login credentials are hard-coded.
+SQL connection string is hard-coded.
 
 The program takes 3 arguments from console. 
 1st argument is minimum number of employees,
@@ -25,6 +28,7 @@ However, it is very close to release version.
 
 Name of country is hard-coded as country assigned to me was definite. Changing country name will not change execution behaviour of the program. You may change it.
 Login credentials are hard-coded too.
+SQL connection string is hard-coded.
 
 The program takes 3 arguments from console. 
 1st argument is the index of the list where minimum and maximum number of employees are stored as hard-coded.
@@ -33,3 +37,8 @@ The program takes 3 arguments from console.
 
 List that holds minimum and maximum number of employees list must be defined by user manually. 
 Making an generic one that would work any for country, would be possible too.
+
+# Possible Improvements
+Obviously there are many possible improvements.
+First of all, moving hard-coded values to outside of program could be nice. So these values can be changed without need of compiling the code.
+Speed of scraping can be optimized. I didnt have so much time to work on it.
