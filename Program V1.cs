@@ -250,10 +250,10 @@ namespace ConsoleApp1
         {
             IWebElement userNameInput = webDriver.FindElement(By.XPath("//input[@placeholder='Email address']"));
             userNameInput.Clear();
-            userNameInput.SendKeys("hohenester@innoscripta.com");
+            userNameInput.SendKeys("userName");
             IWebElement passwordInput = webDriver.FindElement(By.XPath("//input[@placeholder='Password']"));
             passwordInput.Clear();
-            passwordInput.SendKeys("wahyuthebest");
+            passwordInput.SendKeys("password");
             passwordInput.Submit();
         }
 
